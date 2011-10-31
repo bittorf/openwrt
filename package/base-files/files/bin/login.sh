@@ -1,11 +1,16 @@
 #!/bin/sh
-# Copyright (C) 2006-2010 OpenWrt.org
+# Copyright (C) 2006-2011 OpenWrt.org
+
+ssh_server_exists() {
+	[ -e /usr/sbin/dropbear ] && return 0
+	[ -e /usr/sbin/sshd ] && return 0
+}
 
 if grep -qs '^root:[^!]' /etc/passwd /etc/shadow && [ -z "$FAILSAFE" ]; then
 	echo "Login failed."
-	exit 0
+	ssh_server_exists && exit 0
 else
-cat << EOF
+	cat << EOF
  === IMPORTANT ============================
   Use 'passwd' to set your login password
   this will disable telnet and enable SSH
